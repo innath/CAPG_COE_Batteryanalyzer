@@ -1,0 +1,95 @@
+<mvc:View controllerName="project2.controller.View1" xmlns:f="sap.f" xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+     <Page id="page" showNavButton="{UtilityModel>/ovisibleNav}" navButtonPress="onBack" titleAlignment="Center">
+        <content>
+		<fb:FilterBar visible="{UtilityModel>/ovisible}" hSpacing="0.5" showFilterConfiguration="false" id="filterbar" persistencyKey="myPersKey" useToolbar="false" search=".onSearch" >
+							<fb:filterGroupItems>
+								<fb:FilterGroupItem name="Name" label="{i18n>MaterialYear}" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+										<Text width="5%" text="{UtilityModel>/oYear}" />
+									</fb:control>
+								</fb:FilterGroupItem>
+								
+								<fb:FilterGroupItem name="SupplierName" label="{i18n>goodRecptLabel}" groupName="Group1" visibleInFilterBar="true">
+									<fb:control>
+									<Input width="10%" value="{UtilityModel>/GRNumber}" />
+									</fb:control>
+								</fb:FilterGroupItem>
+							</fb:filterGroupItems>
+						</fb:FilterBar>
+            	<Table
+		items="{MaterialDocument>/}" showNoData="true" noDataText="Data not found" growingThreshold="25" growing="true">
+		<headerToolbar>
+			<OverflowToolbar visible="{UtilityModel>/ovisible}">
+				
+				<ToolbarSpacer/>
+				<Label text="{i18n>POText}"/>
+                <Input width="10%" editable="false" value="{UtilityModel>/PurchaseOrder}"/>
+				<Label text="{i18n>SupplierText}"/>
+                <Input width="20%" editable="false" value="{UtilityModel>/Supplier}"/>
+				<Label text="{i18n>totalQtyLabel}"/>
+                <Input width="5%" editable="false" value="{UtilityModel>/TotalCount}"/>
+			</OverflowToolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="{i18n>srNoLabel}" />
+			</Column>
+			<Column>
+				<Text text="{i18n>countLabel}" />
+			</Column>
+			<Column width="30rem">
+				<Text text="{i18n>batryTypeLabel}" />
+			</Column>
+            <Column width="14%">
+				<Text text="{i18n>batryWeightLabel}" />
+			</Column>
+            <Column>
+				<Text text="{i18n>voltLifeLabel}" />
+			</Column>
+			 <Column>
+				<Text text="{i18n>currentLabel}" />
+			</Column>
+			 <Column>
+				<Text text="{i18n>sohLabel}" />
+			</Column>
+			<Column visible="{UtilityModel>/ovisibleNav}">
+				<Text text="{i18n>categoryLabel}" />
+			</Column>
+            <Column visible="{UtilityModel>/ovisibleNav}">
+				<Text text="{i18n>storageLocLabel}" />
+			</Column>
+            <Column visible="{UtilityModel>/ovisibleNav}">
+				<Text text="{i18n>goodRecptDocLabel}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle">
+				<cells>
+					<Text text="{MaterialDocument>MaterialDocumentItem}" wrapping="false" />
+					<Text text="{MaterialDocument>QuantityCount}" wrapping="false"/>
+					<Text text="{MaterialDocument>Material}" />
+                    <Text text="{MaterialDocument>QuantityInEntryUnit} {MaterialDocument>EntryUnit}" wrapping="false" />
+					<!-- <Text text="{TableModel>UOM}" wrapping="false"/> -->
+					<Input value="{MaterialDocument>MaterialDocumentItemText}" name="VoltLife"  change="onVoltLife" editable="{UtilityModel>/oeditable}"/>
+					
+					<Input value="{MaterialDocument>Current}" name="MatCurrent" change="onVoltLife" editable="{UtilityModel>/oeditable}"/>
+					<Input value="{MaterialDocument>SOH}" name="MatSOH" change="onVoltLife" editable="{UtilityModel>/oeditable}"/>
+					
+					<Text text="{MaterialDocument>Category}" />
+					<Text text="{MaterialDocument>oStLoc}" />
+					<Text text="{MaterialDocument>MaterialDocument}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+        </content>
+        <footer>
+        <OverflowToolbar >
+        <ToolbarSpacer ></ToolbarSpacer>
+        <Button text="{i18n>confirmBtn}" visible="{UtilityModel>/ovisible}" type="Accept" press="onPressConfirm"/>
+        </OverflowToolbar>
+        </footer>
+    </Page>
+</mvc:View>

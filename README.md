@@ -1,1 +1,0 @@
-# CAPG_COE_Batteryanalyzer
