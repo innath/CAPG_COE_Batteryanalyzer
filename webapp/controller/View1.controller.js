@@ -137,7 +137,8 @@ sap.ui.define([
                                 "EntryUnit": oSetData[i].EntryUnit,
                                 "QuantityInEntryUnit": oSetData[i].QuantityInEntryUnit,
                                 "IssuingOrReceivingStorageLoc": oSetData[i].IssuingOrReceivingStorageLoc,
-                                "MaterialDocumentItemText": oSetData[i].MaterialDocumentItemText
+                                "MaterialDocumentItemText": oSetData[i].MaterialDocumentItemText,
+                                "IssuingOrReceivingPlant": oSetData[i].Plant
                             }
                             oMatData.push(x);
 
@@ -148,32 +149,32 @@ sap.ui.define([
                         const aCount = new Map([...new Set(oMatData)].map(
                             x => [x.IssuingOrReceivingStorageLoc, oMatData.filter(y => y.IssuingOrReceivingStorageLoc === x.IssuingOrReceivingStorageLoc).length]
                         ));
-                    var secodaryCount,recycleCount;
-                            if(aCount.get("SL01")){
-                                secodaryCount=aCount.get("SL01").toString();
-                            }else{
-                                secodaryCount="0";
-                            }
-                            if(aCount.get("RC01")){
-                                recycleCount=aCount.get("RC01").toString();
-                            }else{
-                                recycleCount="0"
-                            }
+                        var secodaryCount, recycleCount;
+                        if (aCount.get("SL01")) {
+                            secodaryCount = aCount.get("SL01").toString();
+                        } else {
+                            secodaryCount = "0";
+                        }
+                        if (aCount.get("RC01")) {
+                            recycleCount = aCount.get("RC01").toString();
+                        } else {
+                            recycleCount = "0"
+                        }
                         var oPurchaseOrder = oStLoc.getProperty("/PurchaseOrder");
-                        var oPayload2={
-                            "PurchaseOrder":oPurchaseOrder,
-                            "SecondaryBatteryCount":secodaryCount,
-                            "RecycledBatteryCount":recycleCount
+                        var oPayload2 = {
+                            "PurchaseOrder": oPurchaseOrder,
+                            "SecondaryBatteryCount": secodaryCount,
+                            "RecycledBatteryCount": recycleCount
                         }
                         // var oPayload2 = {
                         //     "PurchaseOrder": oPurchaseOrder,
                         //      "SecondaryBatteryCount":"2",
                         //     "RecycledBatteryCount":"5"
                         // }
-                       
+
                         var omod = this.getOwnerComponent().getModel("BtrySorting");
-                      //  var opath="/ZC_GCE_EOLBTRYSORTING(PurchaseOrder='"+oPurchaseOrder+"')"
-                        omod.create("/ZC_GCE_EOLBTRYSORTING",oPayload2, {
+                        //  var opath="/ZC_GCE_EOLBTRYSORTING(PurchaseOrder='"+oPurchaseOrder+"')"
+                        omod.create("/ZC_GCE_EOLBTRYSORTING", oPayload2, {
                             success: function (odata) {
                                 var a = odata;
                             },
@@ -231,50 +232,49 @@ sap.ui.define([
                 var oval = evt.getSource().getValue()
                 var oModel = this.getView().getModel("MaterialDocument")
                 var ocell = evt.getSource().getParent().getAggregation("cells");
-               if(evt.getSource().getName()==='MatCurrent'){
-                evt.getSource().setValue(oval);
-               }else if(evt.getSource().getName()==='MatSOH'){
-                evt.getSource().setValue(oval);
-               }
+                if (evt.getSource().getName() === 'MatCurrent') {
+                    evt.getSource().setValue(oval);
+                } else if (evt.getSource().getName() === 'MatSOH') {
+                    evt.getSource().setValue(oval);
+                }
                 var oVolt = ocell[4];
                 var ocurrent = ocell[5];
                 var oSoh = ocell[6];
-                var oValidate=this.onValidateCalculation(oVolt,ocurrent,oSoh);
-               
+                var oValidate = this.onValidateCalculation(oVolt, ocurrent, oSoh);
+
                 this.oindex = evt.getSource().getParent().getBindingContextPath();
 
-                
-              if(oValidate){
-                if (oVolt.getValue() !== "" && ocurrent.getValue() !== "" && oSoh.getValue() !== "") {
-                    var oPat = "/ZBTRY_LIFE_CLASS(p_InputVoltage='"+oVolt.getValue()+"',p_Current='"+ocurrent.getValue()+"',p_soh='"+oSoh.getValue()+"')/Set"; //new
-                 // var oPat = "/ZBTRY_LIFE_CLASS(p_InputVoltage='55',p_Current='30',p_soh='25')/Set"; //for test 
-                   var omod = this.getOwnerComponent().getModel("BtryLife");
-                   omod.read(oPat, {
-                       success: function (odata) {
-                           var omod = odata.results[0];
-                           var oVoltLife = omod.voltage_life_to.replace(/^0+/, '');
-                           var oStorageLoc = omod.lgort;
-                           var oMatModel = that.getView().getModel("MaterialDocument");
-                           // var currentVal= that.getView().getModel("UtilityModel").getProperty("/Current");
-                           // var sohVal= that.getView().getModel("UtilityModel").getProperty("/SOH");
-                           //  that.getView().getModel("MaterialDocument").setProperty(that.oindex + "/MaterialDocumentItemText", oVoltLife);
-                           that.getView().getModel("UtilityModel").setProperty("/STLoc", oStorageLoc);
-                           oMatModel.setProperty(that.oindex + "/oStLoc", oStorageLoc);
-                         //  oMatModel.setProperty(that.oindex + "/Current", omod.current_to.replace(/^0+/, ''));
-                         //  oMatModel.setProperty(that.oindex + "/SOH", omod.soh_to.replace(/^0+/, ''));
-                           oMatModel.setProperty(that.oindex + "/IssuingOrReceivingStorageLoc", oStorageLoc);
 
-                           // that.getView().getModel("MaterialDocument").refresh(true);
-                       },
-                       error: function (oerror) {
+                if (oValidate) {
+                    if (oVolt.getValue() !== "" && ocurrent.getValue() !== "" && oSoh.getValue() !== "") {
+                        var oPat = "/ZBTRY_LIFE_CLASS(p_InputVoltage='" + oVolt.getValue() + "',p_Current='" + ocurrent.getValue() + "',p_soh='" + oSoh.getValue() + "')/Set"; //new
+                        // var oPat = "/ZBTRY_LIFE_CLASS(p_InputVoltage='55',p_Current='30',p_soh='25')/Set"; //for test 
+                        var omod = this.getOwnerComponent().getModel("BtryLife");
+                        omod.read(oPat, {
+                            success: function (odata) {
+                                var omod = odata.results[0];
+                                var oVoltLife = omod.voltage_life_to.replace(/^0+/, '');
+                                var oStorageLoc = omod.lgort;
+                                var oMatModel = that.getView().getModel("MaterialDocument");
+                                // var currentVal= that.getView().getModel("UtilityModel").getProperty("/Current");
+                                // var sohVal= that.getView().getModel("UtilityModel").getProperty("/SOH");
+                                //  that.getView().getModel("MaterialDocument").setProperty(that.oindex + "/MaterialDocumentItemText", oVoltLife);
+                                that.getView().getModel("UtilityModel").setProperty("/STLoc", oStorageLoc);
+                                oMatModel.setProperty(that.oindex + "/oStLoc", oStorageLoc);
 
-                       }
-                   });
-               } else {
-                   MessageBox.warning("Please enter Voltage Life/Current/SOH.")
-               }
-              }
-                
+                                oMatModel.setProperty(that.oindex + "/IssuingOrReceivingStorageLoc", oStorageLoc);
+                                //  oMatModel.setProperty(that.oindex + "/IssuingOrReceivingPlant", oStorageLoc);
+                                // that.getView().getModel("MaterialDocument").refresh(true);
+                            },
+                            error: function (oerror) {
+
+                            }
+                        });
+                    } else {
+                        MessageBox.warning("Please enter Voltage Life/Current/SOH.")
+                    }
+                }
+
 
             },
             onVisibleField: function () {
@@ -293,37 +293,37 @@ sap.ui.define([
                 history.go(0);
                 //window.top.location = window.top.location;
             },
-            onValidateCalculation:function(oVolt,ocurrent,oSoh){
-                var validateCurrent=true;
-                if(parseInt(oVolt.getValue())<=74){
-                    if(parseInt(ocurrent.getValue())<30){
+            onValidateCalculation: function (oVolt, ocurrent, oSoh) {
+                var validateCurrent = true;
+                if (parseInt(oVolt.getValue()) <= 74) {
+                    if (parseInt(ocurrent.getValue()) < 30) {
                         MessageBox.warning("Please enter current between 30 to 50");
-                        validateCurrent=false;
-                    }else if(parseInt(ocurrent.getValue())>50){
+                        validateCurrent = false;
+                    } else if (parseInt(ocurrent.getValue()) > 50) {
                         MessageBox.warning("Please enter current between 30 to 50");
-                        validateCurrent=false;
+                        validateCurrent = false;
                     }
-                    if(parseInt(oSoh.getValue())>60){
+                    if (parseInt(oSoh.getValue()) > 60) {
                         MessageBox.warning("Please enter SOH between 0 to 60");
-                        validateCurrent=false;
+                        validateCurrent = false;
                     }
-                }else if(parseInt(oVolt.getValue())>74){
-                    if(parseInt(ocurrent.getValue())<50){
+                } else if (parseInt(oVolt.getValue()) > 74) {
+                    if (parseInt(ocurrent.getValue()) < 50) {
                         MessageBox.warning("Please enter current between 50 to 90");
-                        validateCurrent=false;
-                    }else if(parseInt(ocurrent.getValue())>90){
+                        validateCurrent = false;
+                    } else if (parseInt(ocurrent.getValue()) > 90) {
                         MessageBox.warning("Please enter current between 50 to 90");
-                        validateCurrent=false;
+                        validateCurrent = false;
                     }
-                    if(parseInt(oSoh.getValue())<60){
+                    if (parseInt(oSoh.getValue()) < 60) {
                         MessageBox.warning("Please enter SOH between 60 to 100");
-                        validateCurrent=false;
-                    }else if(parseInt(oSoh.getValue())>100){
+                        validateCurrent = false;
+                    } else if (parseInt(oSoh.getValue()) > 100) {
                         MessageBox.warning("Please enter SOH between 60 to 100");
-                        validateCurrent=false;
+                        validateCurrent = false;
                     }
-                }else{
-                    validateCurrent=true
+                } else {
+                    validateCurrent = true
                 }
                 return validateCurrent;
             },
