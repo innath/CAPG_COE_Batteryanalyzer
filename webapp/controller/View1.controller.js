@@ -24,6 +24,7 @@ sap.ui.define([
                 var oDat = new Date();
                 var oDate = oDat.getFullYear();
                 this.getView().getModel("UtilityModel").setProperty("/oYear", oDate);
+                this.getView().byId("buttonConf").setEnabled(false);
 
             },
             //To load table data on initial screen loading 04/07/2023 -Pratik
@@ -247,6 +248,7 @@ sap.ui.define([
 
                 if (oValidate) {
                     if (oVolt.getValue() !== "" && ocurrent.getValue() !== "" && oSoh.getValue() !== "") {
+                        that.getView().byId("buttonConf").setEnabled(true);
                         var oPat = "/ZBTRY_LIFE_CLASS(p_InputVoltage='" + oVolt.getValue() + "',p_Current='" + ocurrent.getValue() + "',p_soh='" + oSoh.getValue() + "')/Set"; //new
                         // var oPat = "/ZBTRY_LIFE_CLASS(p_InputVoltage='55',p_Current='30',p_soh='25')/Set"; //for test 
                         var omod = this.getOwnerComponent().getModel("BtryLife");
@@ -271,9 +273,9 @@ sap.ui.define([
                             }
                         });
                     } else {
-                        MessageBox.warning("Please enter Voltage Life/Current/SOH.")
+                        that.getView().byId("buttonConf").setEnabled(false);
                     }
-                }
+               }
 
 
             },
